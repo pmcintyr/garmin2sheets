@@ -13,6 +13,16 @@ This project was born out of frustration with manually transferring training dat
 - **Mobile-Friendly**: Execute from your phone using Google Colab
 - **CSV Export**: Includes sample data structure for reference
 
+## 📝 Quick Start Checklist
+
+Before you begin, make sure you have:
+
+- [ ] Downloaded your activities CSV from Garmin Connect
+- [ ] Created a Google Cloud project with Sheets and Drive APIs enabled
+- [ ] Downloaded your `credentials.json` file
+- [ ] Created a Google Sheet (or noted the name of an existing one)
+- [ ] Updated the configuration variables in `garminscript.py`
+
 ## 📋 Prerequisites
 
 - A Garmin Connect account with activity data
@@ -21,15 +31,36 @@ This project was born out of frustration with manually transferring training dat
 
 ## 🚀 Getting Started
 
-### Option 1: Google Colab (Recommended)
+### Step 1: Download Your Garmin Data
+
+1. Log in to [Garmin Connect](https://connect.garmin.com/)
+2. Navigate to Activities
+3. Export your activities as a CSV file
+4. Save the file as `Activities.csv` (or note the filename for configuration)
+
+### Step 2: Set Up Google Sheets API
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the **Google Sheets API** and **Google Drive API**
+4. Create credentials (OAuth 2.0 Client ID)
+   - Application type: Desktop app
+5. Download the credentials and save as `credentials.json`
+
+### Step 3: Run the Script
+
+#### Option A: Google Colab (Recommended)
 
 1. Open the script in Google Colab
-2. Upload your `credentials.json` file (Google API credentials)
-3. Run the cells sequentially
-4. Authorize access to your Google Sheets when prompted
-5. Your Garmin data will be automatically synced!
+2. **Connect to Google Drive** when prompted (required to access your files)
+3. Upload your `credentials.json` file to Colab or Drive
+4. Upload your `Activities.csv` file from Garmin Connect
+5. **Configure the script** (see Configuration section below)
+6. Run the cells sequentially
+7. Authorize access when prompted
+8. Your data will be synced to your specified Google Sheet!
 
-### Option 2: Local Setup
+#### Option B: Local Setup
 
 1. Clone the repository:
 ```bash
@@ -42,17 +73,41 @@ cd garmintrainingdata
 pip install -r requirements.txt
 ```
 
-3. Set up Google Sheets API credentials:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select an existing one
-   - Enable the Google Sheets API
-   - Create credentials (OAuth 2.0 Client ID)
-   - Download the credentials and save as `credentials.json`
+3. Place your files:
+   - Add `credentials.json` to the project directory
+   - Add your Garmin `Activities.csv` to the project directory
 
-4. Run the script:
+4. Configure the script (see Configuration section below)
+
+5. Run the script:
 ```bash
 python garminscript.py
 ```
+
+## 🛠️ Configuration
+
+Before running the script, you need to configure three variables at the beginning of `garminscript.py`:
+
+```python
+# === CONFIGURATION ===
+csv_file = 'Activities.csv'          # Name of your Garmin activities CSV file
+google_sheets_doc = 'testfile'       # Name of your Google Sheets document
+credentials_file = 'credentials.json' # Your Google API credentials file
+```
+
+**Configuration Steps:**
+
+1. **csv_file**: Set this to the name of your downloaded Garmin activities CSV file
+   - Default: `'Activities.csv'`
+   - Change if you named your file differently
+
+2. **google_sheets_doc**: Set this to the name of the Google Sheet where you want your data
+   - Default: `'testfile'`
+   - **Important**: Create a Google Sheet with this exact name before running the script, or change this value to match an existing sheet
+
+3. **credentials_file**: Set this to your Google API credentials filename
+   - Default: `'credentials.json'`
+   - Only change if you named your credentials file differently
 
 ## 📁 Project Structure
 
@@ -66,12 +121,19 @@ garmintrainingdata/
 
 ## 🔐 Authentication
 
-The script uses Google OAuth 2.0 for authentication. On first run:
+The script uses Google OAuth 2.0 for authentication and requires access to both Google Sheets and Google Drive.
 
-1. A browser window will open asking you to authorize the application
-2. Grant the necessary permissions
-3. A token will be saved locally for future runs
-4. Subsequent runs won't require re-authentication
+**First Run:**
+
+1. The script will prompt you to connect to **Google Drive** (necessary to access your files)
+2. A browser window will open asking you to authorize the application
+3. Grant permissions for both **Google Sheets** and **Google Drive** access
+4. A token will be saved locally for future runs
+5. Subsequent runs won't require re-authentication
+
+**Required Permissions:**
+- Google Sheets API (to write data)
+- Google Drive API (to access and manage files)
 
 ## 📊 Data Structure
 
@@ -106,11 +168,34 @@ Contributions are welcome! If you have suggestions for improvements or find bugs
 
 ## 🐛 Troubleshooting
 
-**Authentication Issues**: Make sure your `credentials.json` is properly configured and the Google Sheets API is enabled in your Google Cloud project.
+**"File not found" errors**: 
+- Ensure `Activities.csv` is in the same directory as the script
+- Verify the `csv_file` variable matches your actual CSV filename
+- In Google Colab, make sure you've connected to Google Drive and uploaded the file
 
-**Data Not Syncing**: Verify that you have activities in your Garmin Connect account and that your Garmin credentials are correct.
+**Authentication Issues**: 
+- Make sure your `credentials.json` is properly configured
+- Verify that both Google Sheets API and Google Drive API are enabled in your Google Cloud project
+- Try deleting the saved token and re-authenticating
 
-**Import Errors**: Ensure all required Python packages are installed using `pip install -r requirements.txt`.
+**Google Sheets not found**: 
+- Create a Google Sheet with the exact name specified in `google_sheets_doc`
+- Or update the `google_sheets_doc` variable to match an existing sheet name
+- Make sure you're signed in to the correct Google account
+
+**Data Not Syncing**: 
+- Verify that your `Activities.csv` contains data and is properly formatted
+- Check that you've downloaded the CSV from Garmin Connect correctly
+- Ensure the CSV follows Garmin's standard export format
+
+**Import Errors**: 
+- Ensure all required Python packages are installed: `pip install -r requirements.txt`
+- Common packages needed: `gspread`, `oauth2client`, `pandas`
+
+**Google Colab specific issues**:
+- Remember to connect to Google Drive at the start of your session
+- Re-upload files if your Colab session disconnects
+- Check that file paths are correct for the Colab environment
 
 ## 📄 License
 
